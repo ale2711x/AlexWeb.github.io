@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<body style="margin: 20px;">
+
+  <!-- Main Layout Wrapper -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 30px; flex-wrap: wrap;">
+
+    <!-- Left Column: Controls & Buttons -->
+    <div style="flex: 1; min-width: 300px; max-width: 600px;">
+     <h1 style="font-size: 40px;"> Alex's Tune Site </h1>
+        
+        
+
+
+
+        
+      <!-- Progress Bar & Time Display -->
+      <div style="margin-bottom: 20px;">
+        <div id="nowPlaying" style="font-family: sans-serif; font-size: 14px; margin-bottom: 5px;">
+          Select a track
+        </div>
+        <input type="range" id="progressBar" value="0" min="0" max="100" step="0.1" style="width: 100%; cursor: pointer;" disabled>
+        <div style="font-family: sans-serif; font-size: 12px; display: flex; justify-content: space-between;">
+          <span id="currentTime">0:00</span>
+          <span id="duration">0:00</span>
+        </div>
+      </div>
+
+      <!-- Buttons & Hidden Media -->
+     
+        <h3>Topic: Star Wars</h3>
+        <button onclick="toggleSound('track_1', this)">Dark Empire</button>
+      <video id="track_1" src="Dark Empire.mp4" style="display: none;"></video>
+
+ <h3>Topic: Drugs</h3>
+        
+      <button onclick="toggleSound('track_2', this)">A Little Bit</button>
+      <video id="track_2" src="A little Bit.mp4" style="display: none;"></video>
+
+ <h3>Topic: Politics</h3>
+        
+      <button onclick="toggleSound('track_3', this)">Big Talk</button>
+      <video id="track_3" src="Big Talk.mp4" style="display: none;"></video>
+
+      
+      <button onclick="toggleSound('track_5', this)">The Fall</button>
+      <video id="track_5" src="The Fall.mp4" style="display: none;"></video>
+      
+     
+      <button onclick="toggleSound('track_7', this)">Orange Loudmouth</button>
+      <video id="track_7" src="Orange Loudmouth.mp4" style="display: none;"></video>
+       <h3>Topic: Get Rekt LOL</h3>
+
+      <button onclick="toggleSound('track_8', this)">Yellow Memory</button>
+      <video id="track_8" src="Yellow Memory.mp4" style="display: none;"></video>
+
+ <h3>Topic: Ukraine War</h3>
+
+        
+ <button onclick="toggleSound('track_6', this)">Second Best Army</button>
+      <video id="track_6" src="Second Best Army.mp4" style="display: none;"></video>
+       <h3>Topic: Fairchild Republic A-10 Thunderbolt II "Warthog"</h3>
+
+        
+      <button onclick="toggleSound('track_10', this)">Brrrrrrr</button>
+      <video id="track_10" src="Brrrrrrr.mp4" style="display: none;"></video>
+      
+      <h3>Trigger Warning: Child Abuse</h3>
+      <button onclick="toggleSound('track_11', this)">Creaky Toucan's Leaky Glue Can</button>
+      <video id="track_11" src="Creaky Toucan's Leaky Glue Can.mp4" style="display: none;"></video>
+
+        <button onclick="toggleSound('track_4', this)">Phil's Grill/button>
+      <video id="track_4" src="Phil's Grill.mp4" style="display: none;"></video>
+      
+        
+    </div>
+
+    <!-- Right Column: GIF -->
+    <div>
+      <img src="Bob.gif" style="width: 600px; max-width: 100%; height: auto;" alt="Bob">
+    </div>
+
+  </div>
+
+  <!-- Single Script for All Tracks -->
+  <script>
+    let currentMedia = null;
+    let currentBtn = null;
+
+    const progressBar = document.getElementById('progressBar');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+    const nowPlayingEl = document.getElementById('nowPlaying');
+
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return "0:00";
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return mins + ":" + (secs < 10 ? "0" : "") + secs;
+    }
+
+    function toggleSound(trackId, btn) {
+      const media = document.getElementById(trackId);
+
+      if (!btn.dataset.title) {
+        btn.dataset.title = btn.textContent;
+      }
+
+      if (currentMedia && currentMedia !== media) {
+        currentMedia.pause();
+        currentMedia.currentTime = 0;
+        currentMedia.ontimeupdate = null;
+        currentBtn.textContent = currentBtn.dataset.title;
+      }
+
+      if (media.paused) {
+        media.play();
+        btn.textContent = "Pause: " + btn.dataset.title;
+        nowPlayingEl.textContent = "Now Playing: " + btn.dataset.title;
+        progressBar.disabled = false;
+        
+        currentMedia = media;
+        currentBtn = btn;
+
+        media.ontimeupdate = function () {
+          if (media.duration) {
+            progressBar.value = (media.currentTime / media.duration) * 100;
+            currentTimeEl.textContent = formatTime(media.currentTime);
+            durationEl.textContent = formatTime(media.duration);
+          }
+        };
+      } else {
+        media.pause();
+        btn.textContent = btn.dataset.title;
+        nowPlayingEl.textContent = "Paused: " + btn.dataset.title;
+      }
+
+      media.onended = function () {
+        btn.textContent = btn.dataset.title;
+        nowPlayingEl.textContent = "Select a track";
+        progressBar.value = 0;
+        progressBar.disabled = true;
+        currentTimeEl.textContent = "0:00";
+      };
+    }
+
+    progressBar.addEventListener('input', function () {
+      if (currentMedia && currentMedia.duration) {
+        currentMedia.currentTime = (progressBar.value / 100) * currentMedia.duration;
+      }
+    });
+  </script>
+
+</body>
+</html>
